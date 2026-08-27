@@ -131,22 +131,24 @@ func (config *RunConfig) validatePlacementHostAddr() error {
 	if config.PlacementHostAddr == nil {
 		addr := "localhost"
 		if runtime.GOOS == daprWindowsOS {
-			addr += ":50005"
-		} else {
 			addr += ":6050"
+		} else {
+			addr += ":50005"
 		}
 		config.PlacementHostAddr = &addr
 		return nil
 	}
 	placementHostAddr := strings.TrimSpace(*config.PlacementHostAddr)
 	if len(placementHostAddr) == 0 {
+		empty := ""
+		config.PlacementHostAddr = &empty
 		return nil
 	}
 	if indx := strings.Index(placementHostAddr, ":"); indx == -1 {
 		if runtime.GOOS == daprWindowsOS {
-			placementHostAddr += ":50005"
-		} else {
 			placementHostAddr += ":6050"
+		} else {
+			placementHostAddr += ":50005"
 		}
 	}
 	config.PlacementHostAddr = &placementHostAddr
