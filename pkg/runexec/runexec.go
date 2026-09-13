@@ -114,7 +114,10 @@ func NewOutput(config *standalone.RunConfig) (*RunOutput, error) {
 		return nil, err
 	}
 
-	daprCMD, _ := standalone.GetDaprCommand(config)
+	daprCMD, err := standalone.GetDaprCommand(config)
+	if err != nil {
+		return nil, err
+	}
 
 	//nolint
 	var appCMD *exec.Cmd = standalone.GetAppCommand(config)
@@ -124,8 +127,8 @@ func NewOutput(config *standalone.RunConfig) (*RunOutput, error) {
 		AppCMD:       appCMD,
 		AppErr:       nil,
 		AppID:        config.AppID,
-		DaprHTTPPort: config.GRPCPort,
-		DaprGRPCPort: config.HTTPPort,
+		DaprHTTPPort: config.HTTPPort,
+		DaprGRPCPort: config.GRPCPort,
 	}, nil
 }
 
