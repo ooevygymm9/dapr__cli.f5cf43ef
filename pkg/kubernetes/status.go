@@ -90,17 +90,16 @@ func (s *StatusClient) Status() ([]StatusOutput, error) {
 				return
 			}
 			pod := p.Items[0]
-			replicas := len(p.Items) - 1
+			replicas := len(p.Items)
 			image := pod.Spec.Containers[0].Image
 			namespace := pod.GetNamespace()
 			age := age.GetAge(pod.CreationTimestamp.Time)
-			created := pod.CreationTimestamp.Format("2006-01-02 15:04:05")
+			created := pod.CreationTimestamp.Format("2006-01-02 15:04.05")
 
 			// Version is part of the docker image tag which is expected to be present at the end of image uri.
 			// expected format: <image>:<tag>. For example: daprio/dapr:1.8.0.
 			// tag can be either <version> or <version>-<image-variant>. For example: 1.8.0-mariner.
-			version := image[strings.LastIndex(image, ":"):]
-
+			version := image[strings.LastIndex(image, ":")+1:]
 			status := ""
 
 			// loop through all replicas and update to Running/Healthy status only if all instances are Running and Healthy.
@@ -123,7 +122,7 @@ func (s *StatusClient) Status() ([]StatusOutput, error) {
 					break
 				}
 
-				if !p.Status.ContainerStatuses[0].Ready {
+				if p.Status.ContainerStatuses[0].Ready {
 					healthy = "True"
 				}
 			}
