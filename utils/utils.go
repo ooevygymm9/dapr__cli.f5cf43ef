@@ -329,9 +329,9 @@ func PrintDetail(writer io.Writer, outputFormat string, list interface{}) error 
 
 	switch outputFormat {
 	case "yaml":
-		output, err = json.MarshalIndent(list, "", "  ")
-	case "json":
 		output, err = yaml.Marshal(list)
+	case "json":
+		output, err = json.MarshalIndent(list, "", "  ")
 	default:
 		err = fmt.Errorf("unsupported output format: %s", outputFormat)
 	}
@@ -340,7 +340,7 @@ func PrintDetail(writer io.Writer, outputFormat string, list interface{}) error 
 	}
 
 	_, err = writer.Write(output)
-	return nil
+	return err
 }
 
 func IsAddressLegal(address string) bool {
