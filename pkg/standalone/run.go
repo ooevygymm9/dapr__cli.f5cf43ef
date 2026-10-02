@@ -506,15 +506,17 @@ func (config *RunConfig) getAppProtocol() string {
 	appProtocol := strings.ToLower(config.AppProtocol)
 
 	switch appProtocol {
-	case string("grpcs"), string("https"), string("h2"):
+	case string("grpcs"), string("https"), string("h2c"):
 		return appProtocol
 	case string("http"):
-		if !config.AppSSL {
+		// For backwards compatibility, when protocol is HTTP and --app-ssl is set, use "https".
+		if config.AppSSL {
 			return "https"
 		} else {
 			return "http"
 		}
 	case string("grpc"):
+		// For backwards compatibility, when protocol is GRPC and --app-ssl is set, use "grpcs".
 		if config.AppSSL {
 			return string("grpcs")
 		} else {
